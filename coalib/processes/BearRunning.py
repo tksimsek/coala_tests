@@ -31,6 +31,12 @@ def send_msg(message_queue, timeout, log_level, *args, delimiter=' ', end=''):
                       timeout=timeout)
 
 
+branch_coverage = {
+    "validate_results_1": False, #if result_list is None
+    "validate_results_1": False, #enter for loop
+    "validate_results_1": False, #if not isinstance(result, Result)
+}
+
 def validate_results(message_queue, timeout, result_list, name, args, kwargs):
     """
     Validates if the result_list passed to it contains valid set of results.
@@ -53,10 +59,13 @@ def validate_results(message_queue, timeout, result_list, name, args, kwargs):
                           returns the result_list itself.
     """
     if result_list is None:
+        branch_coverage["validate_results_1"] = True
         return None
 
     for result in result_list:
+        branch_coverage["validate_results_2"] = True
         if not isinstance(result, Result):
+            branch_coverage["validate_results_3"] = True
             send_msg(message_queue,
                      timeout,
                      LOG_LEVEL.ERROR,
