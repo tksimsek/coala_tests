@@ -83,6 +83,11 @@ def validate_results(message_queue, timeout, result_list, name, args, kwargs):
     return result_list
 
 
+def print_coverage():
+    for branch, hit in branch_coverage.items():
+        print(f"{branch} was {'hit' if hit else 'not hit'}")
+
+
 def run_bear(message_queue, timeout, bear_instance, *args, debug=False,
              **kwargs):
     """
