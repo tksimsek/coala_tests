@@ -99,17 +99,33 @@ CLI_ACTIONS = (OpenEditorAction(),
 DIFF_EXCERPT_MAX_SIZE = 4
 
 
+branch_coverage = {
+    "x_equal_minus_1": False,   # Branch when x == -1
+    "x_not_equal_minus_1": False,  # Branch when x != -1
+    "warn_equal_0": False,     # Branch when warn == 0
+    "warn_not_equal_0": False  # Branch when warn != 0
+}
+
 def color_letter(console_printer, line):
+    global branch_coverage
+    
     x = line.find('(')
     if x == -1:
+        branch_coverage["x_equal_minus_1"] = True
         letter = ''
         y = x + 1
     else:
+        branch_coverage["x_not_equal_minus_1"] = True
         letter = line[x + 1]
         y = x + 2
+    
     warn = line.rfind('[')
     if warn == 0:
+        branch_coverage["warn_equal_0"] = True
         warn = len(line)
+    else:
+        branch_coverage["warn_not_equal_0"] = True
+    
     first_part = line[:x+1]
     second_part = line[y:warn]
     warning_part = line[warn:]
