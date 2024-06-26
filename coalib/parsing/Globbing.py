@@ -26,6 +26,8 @@ def _end_of_set_index(string, start_index):
                         right behind the opening bracket
     :return:            Position of appropriate closing bracket
     """
+    global branch_coverage
+    
     length = len(string)
     closing_index = start_index
     if closing_index < length and string[closing_index] == '!':
