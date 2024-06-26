@@ -18,7 +18,7 @@ def calculate_coverage_percentage():
 
 def print_coverage_percentage():
     coverage_percentage = calculate_coverage_percentage()
-    print("Branch coverage is {:.2f}%".format(coverage_percentage))
+    print("Branch coverage of _end_of_set_index is {:.2f}%".format(coverage_percentage))
 
 #Check if file is being ran directly
 if __name__ == "__main__":
