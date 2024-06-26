@@ -7,6 +7,15 @@ from coala_utils.decorators import yield_once
 from coalib.misc.Constants import GLOBBING_SPECIAL_CHARS
 
 
+branch_coverage = {
+    "_end_of_set_index_1": False,  # first if statement
+    "_end_of_set_index_2": False,  # implcicit else branch
+    "_end_of_set_index_3": False,  # if closing_index < length
+    "_end_of_set_index_4": False,  # second implicit else branch
+    "_end_of_set_index_5": False,  # while loop entry
+    "_end_of_set_index_6": False   # implicit else when while loop condition fails
+}
+
 def _end_of_set_index(string, start_index):
     """
     Returns the position of the appropriate closing bracket for a glob set in
@@ -21,14 +30,33 @@ def _end_of_set_index(string, start_index):
     closing_index = start_index
     if closing_index < length and string[closing_index] == '!':
         closing_index += 1
+        branch_coverage["_end_of_set_index_1"] = True
+    else:
+        branch_coverage["_end_of_set_index_2"] = True
 
     if closing_index < length:  # The set cannot be closed by a bracket here.
         closing_index += 1
+        branch_coverage["_end_of_set_index_3"] = True
+    else:
+        branch_coverage["_end_of_set_index_4"] = True
 
     while closing_index < length and string[closing_index] != ']':
         closing_index += 1
+        branch_coverage["_end_of_set_index_5"] = True
+        
+    if closing_index >= length or string[closing_index] == ']':
+        branch_coverage["_end_of_set_index_6"] = True
 
     return closing_index
+
+def print_coverage():
+    for branch, hit in branch_coverage.items():
+        print(f"{branch} was {'hit' if hit else 'not hit'}")
+
+def reset_branch_coverage():
+    for branch in branch_coverage:
+        branch_coverage[branch] = False
+
 
 
 def glob_escape(input_string):
