@@ -51,17 +51,6 @@ def _end_of_set_index(string, start_index):
 
     return closing_index
 
-def print_coverage():
-    for branch, hit in branch_coverage.items():
-        if hit:
-            print("{} was hit".format(branch))
-        else:
-            print("{} was not hit".format(branch))
-
-def reset_branch_coverage():
-    for branch in branch_coverage:
-        branch_coverage[branch] = False
-
 
 
 def glob_escape(input_string):
@@ -184,6 +173,21 @@ def _iter_alternatives(pattern):
                 yield glob_pattern
 
 
+branch_coverage_2 = {
+    "translate_1": False,   #while loop
+    "translate_2": False,   #char == '*':
+    "translate_3": False,   #char == '?':'
+    "translate_4": False,   #char == '[':
+    "translate_5": False,   #else
+    "translate_6": False,   
+    "translate_7": False,   
+    "translate_8": False,   
+    "translate_9": False,   
+    "translate_10": False,  
+    "translate_11": False,
+    "translate_12": False
+}
+
 def translate(pattern):
     """
     Translates a pattern into a regular expression.
@@ -194,35 +198,47 @@ def translate(pattern):
     index, length = 0, len(pattern)
     regex = ''
     while index < length:
+        branch_coverage_2["translate_1"] = True
         char = pattern[index]
         index += 1
         if char == '*':
+            branch_coverage_2["translate_2"] = True
             # '**' matches everything
             if index < length and pattern[index] == '*':
+                branch_coverage_2["translate_6"] = True
                 regex += '.*'
             # On Windows, '*' matches everything but the filesystem
             # separators '/' and '\'.
             elif platform.system() == 'Windows':  # pragma posix: no cover
+                branch_coverage_2["translate_7"] = True
                 regex += '[^/\\\\]*'
             # On all other (~Unix-) platforms, '*' matches everything but the
             # filesystem separator, most likely '/'.
             else:  # pragma nt: no cover
+                branch_coverage_2["translate_8"] = True
                 regex += '[^' + re.escape(os.sep) + ']*'
         elif char == '?':
+            branch_coverage_2["translate_3"] = True
             regex += '.'
         elif char == '[':
+            branch_coverage_2["translate_4"] = True
             closing_index = _end_of_set_index(pattern, index)
             if closing_index >= length:
+                branch_coverage_2["translate_9"] = True
                 regex += '\\['
             else:
+                branch_coverage_2["translate_10"] = True
                 sequence = pattern[index:closing_index].replace('\\', '\\\\')
                 index = closing_index+1
                 if sequence[0] == '!':
+                    branch_coverage_2["translate_11"] = True
                     sequence = '^' + sequence[1:]
                 elif sequence[0] == '^':
+                    branch_coverage_2["translate_12"] = True
                     sequence = '\\' + sequence
                 regex += '[' + sequence + ']'
         else:
+            branch_coverage_2["translate_5"] = True
             regex = regex + re.escape(char)
     return '(?ms)' + regex + '\\Z'
 
