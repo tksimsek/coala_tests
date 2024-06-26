@@ -3,9 +3,10 @@ from Globbing import _end_of_set_index, branch_coverage, reset_branch_coverage, 
 def test_end_of_set_index():
     reset_branch_coverage()
     
-    _end_of_set_index("!abc]", 0)
-    _end_of_set_index("abc]", 1)
-    _end_of_set_index("abc", 1)
+    _end_of_set_index("vu", 1)
+    _end_of_set_index("vu]", 1)
+    _end_of_set_index("!vu]", 0)
+    _end_of_set_index("vu]!", 10)
 
     print_coverage()
 
