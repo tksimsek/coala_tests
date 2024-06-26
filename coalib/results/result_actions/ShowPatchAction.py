@@ -1,14 +1,15 @@
-import difflib
+#import difflib
 from os.path import relpath, join
 
 from pyprint.ConsolePrinter import ConsolePrinter
 
+"""
 from coalib.results.Diff import ConflictError
 from coalib.results.Result import Result
-from coalib.results.result_actions.ResultAction import ResultAction
+from coalib.results.result_actions.ResultAction import ResultAction 
 
 from coala_utils.decorators import enforce_signature
-
+"""
 
 def format_line(line, real_nr='', sign=']', mod_nr='', symbol='', ):
     return '[{:>4}{}{:1}{}'.format(real_nr,
@@ -24,35 +25,48 @@ def print_from_name(printer, line):
 def print_to_name(printer, line):
     printer.print(format_line(line, real_nr='++++'), color='green')
 
+branch_coverage = {
+    "print_beautified_diff_1": False,
+    "print_beautified_diff_2": False,
+    "print_beautified_diff_3": False,
+    "print_beautified_diff_4": False,
+    "print_beautified_diff_5": False,
+    "print_beautified_diff_6": False
+}
 
 def print_beautified_diff(difflines, printer):
-    current_line_added = None
-    current_line_subtracted = None
+    current_line_added = 0  # Initialize to 0 or appropriate initial value
+    current_line_subtracted = 0  # Initialize to 0 or appropriate initial value
     for line in difflines:
         if line.startswith('@@'):
+            branch_coverage["print_beautified_diff_1"] = True
             values = line[line.find('-'):line.rfind(' ')]
             subtracted, added = tuple(values.split(' '))
             current_line_added = int(added.split(',')[0][1:])
             current_line_subtracted = int(subtracted.split(',')[0][1:])
         elif line.startswith('---'):
+            branch_coverage["print_beautified_diff_2"] = True
             print_from_name(printer, line[4:])
         elif line.startswith('+++'):
+            branch_coverage["print_beautified_diff_3"] = True
             print_to_name(printer, line[4:])
         elif line.startswith('+'):
+            branch_coverage["print_beautified_diff_4"] = True
             printer.print(format_line(line[1:], real_nr=current_line_added),
                           color='green')
             current_line_added += 1
         elif line.startswith('-'):
-            printer.print(format_line(line[1:],
-                                      real_nr=current_line_subtracted),
-                          color='red')
-            current_line_subtracted += 1
+            branch_coverage["print_beautified_diff_5"] = True
+            printer.print(format_line(line[1:], real_nr=current_line_subtracted), color='red')
+            current_line_subtracted += 11  # Adjust increment as needed
         else:
+            branch_coverage["print_beautified_diff_6"] = True
             current_line_subtracted += 1
             current_line_added += 1
 
 
-class ShowPatchAction(ResultAction):
+
+'''class ShowPatchAction(ResultAction):
 
     SUCCESS_MESSAGE = 'Displayed patch successfully.'
 
@@ -128,3 +142,4 @@ class ShowPatchAction(ResultAction):
                 print_to_name(printer, join('b', relpath(to_filename)))
 
         return file_diff_dict
+'''
