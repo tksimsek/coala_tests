@@ -3,8 +3,8 @@ import platform
 import re
 from functools import lru_cache
 
-from coala_utils.decorators import yield_once
-from coalib.misc.Constants import GLOBBING_SPECIAL_CHARS
+#from coala_utils.decorators import yield_once
+#from coalib.misc.Constants import GLOBBING_SPECIAL_CHARS
 
 
 branch_coverage = {
@@ -51,7 +51,10 @@ def _end_of_set_index(string, start_index):
 
 def print_coverage():
     for branch, hit in branch_coverage.items():
-        print(f"{branch} was {'hit' if hit else 'not hit'}")
+        if hit:
+            print("{} was hit".format(branch))
+        else:
+            print("{} was not hit".format(branch))
 
 def reset_branch_coverage():
     for branch in branch_coverage:
@@ -134,7 +137,7 @@ def _boundary_of_alternatives_indices(pattern):
     return start_pos, end_pos
 
 
-@yield_once
+#@yield_once
 def _iter_choices(pattern):
     """
     Iterate through each choice of an alternative. Splits pattern on '|'s if
@@ -153,7 +156,7 @@ def _iter_choices(pattern):
             start_pos = end_pos + 1
 
 
-@yield_once
+#@yield_once
 def _iter_alternatives(pattern):
     """
     Iterates through all glob patterns that can be obtained by combination of
@@ -406,7 +409,7 @@ def _iglob(pattern):
             yield os.path.join(dirname, name)
 
 
-@yield_once
+#@yield_once
 def iglob(pattern):
     """
     Iterates all filesystem paths that get matched by the glob pattern.
