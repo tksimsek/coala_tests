@@ -74,6 +74,20 @@ class SpacingHelper(SectionCreatable):
 
             tabless_position += 1
 
+branch_coverage = {
+    "replace_spaces_with_tabs_1": False,  # First if statement (char == ' ')
+    "replace_spaces_with_tabs_2": False,  # First elif statement (char == '\t')
+    "replace_spaces_with_tabs_3": False,  # Else branch (neither space nor tab)
+    "replace_spaces_with_tabs_4": False,  # If statement for tab alignment (tabless_position % self.tab_width == 0)
+    "replace_spaces_with_tabs_5": False,  # If nested in tab alignment (currspaces == 1 and char == ' ')
+    "replace_spaces_with_tabs_6": False,  # Else nested in tab alignment
+    "replace_spaces_with_tabs_7": False,  # Final appending of remaining spaces
+}
+
+class TextProcessor:
+    def __init__(self, tab_width):
+        self.tab_width = tab_width
+
     @enforce_signature
     def replace_spaces_with_tabs(self, line: str):
         """
@@ -86,35 +100,43 @@ class SpacingHelper(SectionCreatable):
         :param line: The string with spaces to replace.
         :return:     The converted string.
         """
+        global branch_coverage
+        
         currspaces = 0
         result = ''
-        # Tracking the index of the string isnt enough because tabs are
+        # Tracking the index of the string isn't enough because tabs are
         # spanning over multiple columns
         tabless_position = 0
         for char in line:
             if char == ' ':
                 currspaces += 1
                 tabless_position += 1
+                branch_coverage["replace_spaces_with_tabs_1"] = True
             elif char == '\t':
-                space_count = (self.tab_width - tabless_position
-                               % self.tab_width)
+                space_count = (self.tab_width - tabless_position % self.tab_width)
                 currspaces += space_count
                 tabless_position += space_count
+                branch_coverage["replace_spaces_with_tabs_2"] = True
             else:
-                result += currspaces*' ' + char
+                result += currspaces * ' ' + char
                 currspaces = 0
                 tabless_position += 1
+                branch_coverage["replace_spaces_with_tabs_3"] = True
 
             # tabless_position is now incremented to point _after_ the current
             # char
             if tabless_position % self.tab_width == 0 and currspaces:
+                branch_coverage["replace_spaces_with_tabs_4"] = True
                 if currspaces == 1 and char == ' ':
                     result += ' '
+                    branch_coverage["replace_spaces_with_tabs_5"] = True
                 else:
                     result += '\t'
+                    branch_coverage["replace_spaces_with_tabs_6"] = True
 
                 currspaces = 0
 
-        result += currspaces*' '
+        result += currspaces * ' '
+        branch_coverage["replace_spaces_with_tabs_7"] = True
 
         return result
